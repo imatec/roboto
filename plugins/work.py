@@ -20,12 +20,13 @@ class WorkPlugin(WillPlugin):
             self.save("current_tasks", current_tasks)
             self.say("okay", message=message)
 
-    @respond_to("^work status?$")
-    def working_status(self, message):
+    @respond_to("^work status\?$")
+    def work_status(self, message):
         current_tasks = self.load("current_tasks", {})
         current_task = current_tasks[message.sender.nick]
         if current_task:
-            self.say("you are working in <b>{task}</b> since {date}".format(task=current_task['task'], date=current_task['date']), message=message)
+            self.say("""you are working on: {task}
+since: {date}""".format(task=current_task['task'], date=current_task['date']), message=message)
         else:
             self.say("no task", message=message)
 
