@@ -13,7 +13,7 @@ class WorkPlugin(WillPlugin):
         return past_tasks if past_tasks else None
 
     def insert_past_task(self, task):
-        past_tasks = self.past_tasks()
+        past_tasks = self.past_tasks() or []
         past_tasks.append(task)
         self.save("past_tasks", past_tasks)
 
@@ -50,18 +50,18 @@ class WorkPlugin(WillPlugin):
 
     @respond_to("^work status\?$")
     def work_status(self, message):
-        current_tasks = self.current_tasks()
-        current_task = current_tasks[message.sender.nick]
+        current_tasks = self.current_tasks() or {}
+        current_task = current_tasks.get(message.sender.nick, None)
         if current_task:
             self.say("""you are working on: {task}
 since: {date}""".format(task=current_task['task'], date=current_task['ini']), message=message)
         else:
             self.say("no task", message=message)
 
-    @respond_to("^show past tasks\?$")
+    @respond_to("^show past tasks$")
     def show_past_tasks(self, message):
         alltasks = ""
-        past_tasks = self.past_tasks()
+        past_tasks = self.past_tasks() or []
         for task in past_tasks:
             alltasks += str(task)
         self.say("past tasks: {alltasks}".format(alltasks=alltasks), message=message)
